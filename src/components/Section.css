@@ -1,0 +1,38 @@
+.section {
+  padding-block: var(--section-pad);
+  border-top: 1px solid var(--border);
+  /* Offset anchor jumps so headings clear the sticky navbar. */
+  scroll-margin-top: var(--nav-h);
+}
+
+.section__header {
+  margin-bottom: var(--space-6);
+}
+
+.section__heading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  /* The heading is not interactive, so it gets the smallest turn in the
+     system — enough to separate the numeral from the title, no more. */
+  --turn: var(--tilt-hover);
+}
+
+.section__index {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  /* --muted, not --grey: #5A5F6B only reaches ~3.1:1 on --bg. */
+  color: var(--muted);
+}
+
+.section__title {
+  font-size: var(--text-2xl);
+  color: var(--text);
+}
+
+.section__lead {
+  max-width: 62ch;
+  margin-top: var(--space-3);
+  font-size: var(--text-md);
+  color: var(--muted);
+}

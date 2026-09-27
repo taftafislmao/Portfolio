@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Depth — a lightweight 3D foundation.
+   --------------------------------------------------------------------------
+   CSS transforms only. No WebGL, no canvas, no 3D library, no JavaScript
+   animation loops. Everything here is `transform`, which browsers composite
+   on the GPU, so hovering never triggers layout or paint.
+
+   How it fits together:
+
+     .depth-scene   on a wrapper  — establishes the perspective for its child
+     .depth-object  on the child  — keeps that child's layers in one 3D space
+     .depth-xs/sm/md on layers    — pushes a layer toward the viewer
+
+   Each card gets its own `.depth-scene` rather than one shared scene, so
+   every card is viewed from its own centre. A single scene around the grid
+   would put the vanishing point at the grid's centre and skew the cards at
+   the edges.
+
+   Rotation is driven by `--tilt-x` / `--tilt-y`, which default to `0deg` and are
+   set by `usePointerTilt.ts` while the pointer is over an object. Because the
+   object's own `transform` reads them, adding pointer tracking needs no change
+   here or to the transform declaration.
+
+   Keep --perspective large and the depth values small. The goal is depth,
+   not a dramatic 3D website.
+   ========================================================================== */
+
+.depth-scene {
+  perspective: var(--perspective);
+  perspective-origin: center;
+}
+
+.depth-object {
+  transform-style: preserve-3d;
+}
+
+/* Layer offsets. A few px against a 1200px perspective is a fraction of a
+   percent of scale at rest, and clear separation once the object tilts. */
+.depth-xs {
+  transform: translateZ(var(--depth-xs));
+}
+
+.depth-sm {
+  transform: translateZ(var(--depth-sm));
+}
+
+.depth-md {
+  transform: translateZ(var(--depth-md));
+}
+
+/* ==========================================================================
+   Hover depth for existing surfaces
+   --------------------------------------------------------------------------
+   The foundation above is passive — it only sets up a space. This is the part
+   that moves: a surface rises toward the viewer on hover and, where it has
+   layers inside it, turns by `--tilt-hover` so those layers separate instead
+   of sliding as one flat sheet.
+
+   CSS only. No JavaScript, no listeners, no animation loop — the browser
+   composites the transition on the GPU.
+
+   Strength is deliberately a step below the card lift (--depth-sm). `.btn`,
+   links and chips get `--depth-xs` and no turn; panels, rows and headings get
+   the same rise plus the small turn. Override `--lift` / `--turn` per element
+   to tune one.
+
+   The lift uses the `perspective()` transform *function*, not the property,
+   so each element carries its own vanishing point: no wrapper element is
+   needed, and there is none of the skew you get from hanging a whole grid off
+   one shared perspective. Elements that also want layered children take
+   `.depth-scene` + `.depth-object` as well, which supplies the property for
+   the children.
+   ========================================================================== */
+.depth-lift {
+  --lift: var(--depth-xs);
+  --turn: 0deg;
+  transition: transform var(--dur) var(--ease);
+}
+
+.depth-lift:hover {
+  transform: perspective(var(--perspective)) translateZ(var(--lift))
+    rotateX(calc(-1 * var(--turn))) rotateY(var(--turn));
+}
+
+/* --- Touch ----------------------------------------------------------------
+   No pointer to hover with, so the depth interaction is removed outright. The
+   hover colour and surface changes it sits alongside still apply. */
+@media (hover: none), (pointer: coarse) {
+  .depth-lift {
+    transition: none;
+  }
+
+  .depth-lift:hover {
+    transform: none;
+  }
+}
+
+/* Anyone who asked for less motion gets the flat version: no perspective, no
+   3D, no transforms from this system at all. */
+@media (prefers-reduced-motion: reduce) {
+  .depth-scene {
+    perspective: none;
+  }
+
+  .depth-object {
+    transform-style: flat;
+  }
+
+  .depth-xs,
+  .depth-sm,
+  .depth-md {
+    transform: none;
+  }
+
+  .depth-lift {
+    transition: none;
+  }
+
+  .depth-lift:hover {
+    transform: none;
+  }
+}

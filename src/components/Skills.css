@@ -1,0 +1,70 @@
+.skills {
+  border-bottom: 1px solid var(--border);
+}
+
+.skills__group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--space-3);
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--border);
+  /* Turns slightly on hover so the label, which sits a step forward, separates
+     from the technologies behind it. */
+  --turn: var(--tilt-hover);
+}
+
+/* Overrides the global h3 weight/tracking — this is a small technical label. */
+.skills__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.skills__items {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Separator sits outside the hoverable span, so it never sits inside the
+   highlighted area. */
+.skills__item:not(:last-child)::after {
+  content: '·';
+  margin-inline: var(--space-2);
+  color: var(--grey);
+}
+
+.skills__tech {
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+  color: var(--muted);
+  /* The smallest lift in the system: it rises, it does not turn. */
+  --lift: calc(var(--depth-xs) / 2);
+  transition:
+    background-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+/* Restrained: a small surface change plus the blue accent. No movement. */
+.skills__tech:hover {
+  background-color: var(--raised);
+  color: var(--blue);
+}
+
+/* --- Desktop: label column beside the technologies ------------------------ */
+@media (min-width: 700px) {
+  .skills__group {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    column-gap: var(--space-5);
+    align-items: baseline;
+  }
+}

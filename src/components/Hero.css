@@ -1,0 +1,245 @@
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* Fill the first screen without exceeding it on very tall displays. */
+  min-height: clamp(30rem, calc(100svh - var(--nav-h)), 46rem);
+  padding-block: clamp(3.5rem, 10vh, 6rem);
+}
+
+/* Single column by default. The asymmetric split kicks in at 1024px, where
+   there is room for the rail without squeezing the name. */
+.hero__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--space-7);
+}
+
+.hero__identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+/* --- Label row: mono label with a hairline running to the column edge ----- */
+.hero__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  margin-bottom: var(--space-5);
+}
+
+.hero__label-rule {
+  flex: 1 1 auto;
+  height: 1px;
+  background-color: var(--border);
+}
+
+/* ==========================================================================
+   Name — 3D typography.
+   --------------------------------------------------------------------------
+   The heading establishes the perspective; the inner span is the layer that
+   actually moves. It reads `--tilt-x` / `--tilt-y`, which usePointerTilt
+   writes while the pointer is over it, and lifts a little in Z on hover so the
+   text sits slightly off the page.
+
+   Depth comes from a second copy of the text sitting behind the real one at
+   negative Z (the ::before extrusion). At rest the two are concentric and the
+   front copy covers it completely, so the resting state stays clean; the gap
+   only opens as the name rotates, which is what reads as letter thickness
+   rather than as a spinning object.
+   ========================================================================== */
+.hero__name {
+  position: relative;
+  font-size: var(--text-hero);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  /* Uppercase is presentational — the DOM text stays "Mostafa Samir", which is
+     also what the extrusion copy is built from. */
+  text-transform: uppercase;
+  color: var(--text);
+  /* Signposts the tilt as an interaction. Clicking returns to the top — see
+     Hero.tsx. */
+  cursor: pointer;
+  perspective: 800px;
+}
+
+.hero__name-inner {
+  position: relative;
+  display: inline-block;
+  transform-style: preserve-3d;
+  /* Both hover states repeat the rotation so the tilt keeps tracking while the
+     pointer is down; only the Z changes, and the transition carries it. */
+  transform: translateZ(0) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+  transition: transform 220ms var(--ease);
+}
+
+.hero__name:hover .hero__name-inner {
+  transform: translateZ(var(--depth-sm)) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+}
+
+/* The extrusion: the same string, sitting behind the letters in their own 3D
+   space. Dark, so it reads as the shadowed side of the type rather than as a
+   duplicate. */
+.hero__name-inner::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--border);
+  transform: translateZ(calc(-1 * var(--depth-sm)));
+}
+
+/* A 2px electric-blue rule that draws in from the left on hover. */
+.hero__name::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.06em;
+  height: 2px;
+  background-color: var(--blue);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+
+.hero__name:hover::after {
+  transform: scaleX(1);
+}
+
+/* --- Intro ---------------------------------------------------------------- */
+.hero__intro {
+  max-width: 56ch;
+  margin-top: var(--space-5);
+  font-size: var(--text-md);
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+/* --- Actions -------------------------------------------------------------- */
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+/* --- Factual rail --------------------------------------------------------- */
+.hero__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5) var(--space-6);
+  margin: 0;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+.hero__fact {
+  min-width: 0;
+}
+
+.hero__fact-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero__fact-value {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+
+/* --- Desktop: asymmetric split -------------------------------------------- */
+@media (min-width: 1024px) {
+  .hero__inner {
+    grid-template-columns: minmax(0, 1fr) 12rem;
+    column-gap: clamp(2.5rem, 7vw, 7rem);
+  }
+
+  /* The rail stretches to the row height so its hairline reads as a full
+     divider, with the facts pushed to the bottom for the asymmetry. */
+  .hero__facts {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: var(--space-4);
+    padding-top: 0;
+    padding-left: var(--space-5);
+    border-top: 0;
+    border-left: 1px solid var(--border);
+  }
+}
+
+/* --- Mobile: keep the hierarchy, not a shrunken desktop ------------------- */
+@media (max-width: 640px) {
+  /* Don't force a full screen here — with a 36px name the block is short, and
+     the leftover space reads as empty rather than intentional. Capping it also
+     lets the next section peek in as a scroll cue. */
+  .hero {
+    min-height: clamp(28rem, calc(100svh - var(--nav-h)), 36rem);
+  }
+
+  .hero__intro {
+    max-width: 100%;
+  }
+
+  .hero__actions {
+    width: 100%;
+  }
+
+  /* Comfortable tap targets. */
+  .hero__actions .btn {
+    flex: 1 1 10rem;
+    min-height: 2.75rem;
+  }
+
+  .hero__facts {
+    gap: var(--space-4) var(--space-5);
+  }
+}
+
+/* --- Static name ----------------------------------------------------------
+   Touch devices get no pointer to track, so the name stays flat and simply
+   holds its resting state. Matches the guard in usePointerTilt, which refuses
+   to attach without a fine pointer. */
+@media (hover: none), (pointer: coarse) {
+  .hero__name {
+    perspective: none;
+  }
+
+  .hero__name-inner,
+  .hero__name:hover .hero__name-inner {
+    transform: none;
+  }
+
+  .hero__name-inner::before {
+    display: none;
+  }
+}
+
+/* Reduced motion gets the same flat version, minus the transition. The blue
+   underline still appears on hover, so the name continues to read as
+   interactive without anything moving. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__name {
+    perspective: none;
+  }
+
+  .hero__name-inner,
+  .hero__name:hover .hero__name-inner {
+    transform: none;
+    transition: none;
+  }
+
+  .hero__name-inner::before {
+    display: none;
+  }
+}

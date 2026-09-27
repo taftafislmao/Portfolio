@@ -1,0 +1,98 @@
+/* A single restrained raised panel. Not a marketing CTA: copy is left-aligned,
+   there is no oversized button, and the surface is the same one the project
+   cards use, so it reads as part of the page rather than a banner. */
+.contact__panel {
+  padding: clamp(1.75rem, 2.6vw, 2rem);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+  /* Same vocabulary as a project card, a step quieter: the panel turns by
+     --tilt-hover rather than tracking the pointer. */
+  --turn: var(--tilt-hover);
+  /* Both, not just box-shadow: this declaration replaces the one .depth-lift
+     supplies, so dropping transform here would kill the lift's easing. */
+  transition:
+    box-shadow var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+/* The deeper of the two existing shadows — the same one a hovering card takes.
+   Nothing new is introduced; it is the card's own hover state. */
+.contact__panel:hover {
+  box-shadow: var(--shadow-raised-hover);
+}
+
+/* Sits a step below the section title — this is a statement inside the section,
+   not a second section heading. */
+.contact__heading {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.contact__invite {
+  max-width: 52ch;
+  margin-top: var(--space-4);
+  font-size: var(--text-md);
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* --- Links -----------------------------------------------------------------
+   A hairline separates the pitch from the details. Each row is label | value,
+   narrow enough that the same two columns work on mobile. */
+.contact__links {
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+.contact__row {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  column-gap: var(--space-4);
+  align-items: baseline;
+}
+
+.contact__row + .contact__row {
+  margin-top: var(--space-3);
+}
+
+.contact__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.contact__value {
+  margin: 0;
+}
+
+.contact__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  font-size: var(--text-base);
+  color: var(--text);
+  /* Rise only — half the panel's own lift, and no turn. */
+  --lift: calc(var(--depth-xs) / 2);
+  transition:
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.contact__link:hover {
+  color: var(--blue);
+}
+
+/* --- Mobile: comfortable tap targets -------------------------------------- */
+@media (max-width: 640px) {
+  .contact__link {
+    min-height: 2.75rem;
+  }
+}

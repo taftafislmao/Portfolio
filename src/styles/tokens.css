@@ -1,0 +1,113 @@
+/* ==========================================================================
+   Slate & Steel — design tokens
+   --------------------------------------------------------------------------
+   Single source of truth for colour, type, spacing and layout.
+
+   Weight rule: black + grey must carry roughly 85% of the visual weight.
+   Blue (--blue / --blue-hover) is reserved for CTAs, links and active states.
+   Never use blue for decoration, headings, or large fills.
+   ========================================================================== */
+
+:root {
+  /* --- Surfaces (the 85%) ------------------------------------------------- */
+  --bg: #0a0a0b; /* page background */
+  --surface: #18181b; /* cards, panels */
+  --raised: #232326; /* raised surface: nav, inputs, hover fills */
+  --border: #333336; /* hairlines and dividers */
+
+  /* --- Signature --------------------------------------------------------- */
+  --grey: #5a5f6b; /* signature grey — decorative/non-text use only (fails AA as text) */
+  --blue: #4c8dff; /* signature blue: CTAs, links, active states */
+  --blue-hover: #2e5cb8; /* blue hover / pressed */
+
+  /* --- Text -------------------------------------------------------------- */
+  --text: #e4e4e7; /* primary text */
+  --muted: #8b8b8f; /* secondary text */
+
+  /* --- Derived (kept minimal, all blue-tinted or neutral) ---------------- */
+  --blue-wash: rgba(76, 141, 255, 0.08);
+
+  /* --- Typography --------------------------------------------------------
+     One step per level — no two levels share a size, and nothing below a
+     section title may out-size it:
+     hero 80 > section title 30 > in-section heading 26 > project name 24 >
+     lead 16 > body 15 > nav / meta 13 > mono labels 12.
+     ---------------------------------------------------------------------- */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --text-xs: 0.75rem; /* 12px — mono labels, tags, metadata */
+  --text-sm: 0.8125rem; /* 13px — nav links, small metadata */
+  --text-base: 0.9375rem; /* 15px — body */
+  --text-md: 1rem; /* 16px — lead paragraphs */
+  --text-lg: clamp(1.125rem, 2.1vw, 1.5rem); /* 18–24px — project names */
+  --text-xl: clamp(1.375rem, 2.4vw, 1.625rem); /* 22–26px — in-section headings */
+  --text-2xl: clamp(1.5rem, 3vw, 1.875rem); /* 24–30px — section titles */
+  --text-hero: clamp(2.25rem, 7.5vw, 5rem); /* 36–80px — hero name */
+
+  /* --- Spacing scale ----------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  /* --- Layout ------------------------------------------------------------ */
+  --container: 68rem; /* 1088px */
+  --gutter: clamp(1.25rem, 5vw, 2.5rem);
+  --nav-h: 4rem;
+  --section-pad: clamp(3.5rem, 6vw, 5.5rem);
+
+  /* --- Depth — lightweight 3D foundation ----------------------------------
+     Deliberately small. Nothing here should read as "3D" on its own: the
+     values exist so that, once a subtle tilt is applied later, the result
+     reads as depth rather than as a rotation. Large values here would turn
+     the page into a gimmick and cost low-end GPUs for no gain.
+     ---------------------------------------------------------------------- */
+  --perspective: 1200px;
+  --depth-xs: 6px;
+  --depth-sm: 12px;
+  --depth-md: 20px;
+  /* Rotation that tracks the pointer lives in usePointerTilt.ts (MAX_TILT),
+     because that value has to be computed in JS. This one is different: the
+     fixed, hover-only turn a surface makes so its layers separate. It is a
+     fraction of MAX_TILT on purpose — it never tracks anything. */
+  --tilt-hover: 1.5deg;
+
+  /* --- Radii — deliberately restrained, never pill or mega-rounded -------- */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 12px; /* cards */
+
+  /* --- Elevation — dark only. Never glowing, never blue-tinted. ---------- */
+  --shadow-raised:
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 6px 16px rgba(0, 0, 0, 0.5);
+  --shadow-raised-hover:
+    0 2px 4px rgba(0, 0, 0, 0.6),
+    0 12px 28px rgba(0, 0, 0, 0.55);
+
+  /* --- Motion — short, functional, never decorative ---------------------- */
+  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+  --dur: 160ms;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --nav-h: 3.5rem;
+  }
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur: 0ms;
+  }
+}

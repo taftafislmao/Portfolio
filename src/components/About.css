@@ -1,0 +1,57 @@
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--space-6);
+}
+
+/* --- Running copy --------------------------------------------------------- */
+.about__body {
+  max-width: 62ch;
+}
+
+.about__paragraph {
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.about__paragraph + .about__paragraph {
+  margin-top: var(--space-4);
+}
+
+/* The opening paragraph carries the section, so it gets full-contrast text and
+   one step more size. The rest sits back as muted body. */
+.about__paragraph--lead {
+  font-size: var(--text-md);
+  line-height: 1.65;
+  color: var(--text);
+}
+
+/* --- Supporting rail ------------------------------------------------------ */
+.about__aside-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.about__aside-value {
+  margin-top: var(--space-2);
+  font-size: var(--text-base);
+  color: var(--text);
+}
+
+/* --- Desktop: add the rail ------------------------------------------------ */
+@media (min-width: 900px) {
+  .about {
+    grid-template-columns: minmax(0, 1fr) 14rem;
+    column-gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .about__aside {
+    padding-left: var(--space-5);
+    border-left: 1px solid var(--border);
+  }
+}

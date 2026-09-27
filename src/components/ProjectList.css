@@ -1,0 +1,191 @@
+/* Mobile-first: one column, widening to two then three as space allows. */
+.projects {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.25rem, 2.2vw, 1.75rem);
+}
+
+@media (min-width: 680px) {
+  .projects {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .projects {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* The scene wrapper is the grid item — let the card fill it so cards in a row
+   keep matching heights. */
+.projects > .depth-scene {
+  display: flex;
+}
+
+/* --- Card ----------------------------------------------------------------- */
+.project-card {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.5rem, 2.4vw, 1.75rem);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+  /* translate3d keeps this on its own compositor layer. --tilt-x / --tilt-y
+     are written by usePointerTilt while the pointer is over the card. */
+  transform: translate3d(0, 0, 0) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition:
+    transform var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+
+/* A soft sheen that tracks the pointer, so the surface reads as a lit object
+   rather than a flat rectangle. Deliberately a neutral light, not blue — a
+   blue glow here would fight the Slate & Steel rule that blue is an accent.
+
+   `border-radius: inherit` clips the gradient to the card's rounded box, which
+   matters: `overflow: hidden` would clip too, but it would also force the card
+   to flatten and kill the preserve-3d layers. */
+.project-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: radial-gradient(
+    16rem circle at var(--mx, 50%) var(--my, 50%),
+    rgba(228, 228, 231, 0.07),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+  pointer-events: none;
+}
+
+.project-card:hover::before {
+  opacity: 1;
+}
+
+.project-card:hover {
+  /* -3px up and a little toward the viewer — depth, not a jump. */
+  transform: translate3d(0, -3px, var(--depth-sm)) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+  background-color: var(--raised);
+  border-color: var(--grey);
+  box-shadow: var(--shadow-raised-hover);
+}
+
+/* --- Number --------------------------------------------------------------- */
+.project-card__number {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* --- Name ----------------------------------------------------------------- */
+.project-card__name {
+  margin-top: var(--space-4);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  transition: color var(--dur) var(--ease);
+}
+
+.project-card:hover .project-card__name {
+  color: var(--blue);
+}
+
+/* --- Description ---------------------------------------------------------- */
+.project-card__description {
+  margin-top: var(--space-3);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* --- Tags ----------------------------------------------------------------- */
+.project-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  padding: 0;
+  list-style: none;
+}
+
+.project-card__tag {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+/* --- Links — pinned to the card floor so cards in a row align ------------- */
+.project-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  /* Absorbs any slack, so short cards keep their links on the same baseline
+     as tall ones. The padding guarantees a minimum gap when there is none. */
+  margin-top: auto;
+  padding-top: var(--space-5);
+}
+
+.project-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.25rem;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  color: var(--muted);
+  transition: color var(--dur) var(--ease);
+}
+
+.project-card__arrow {
+  color: var(--grey);
+  transition:
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.project-card:hover .project-card__link {
+  color: var(--text);
+}
+
+.project-card:hover .project-card__arrow {
+  color: var(--blue);
+  transform: translateX(3px);
+}
+
+/* Hovering one link outranks the card-level rule. */
+.project-card:hover .project-card__link:hover {
+  color: var(--blue);
+}
+
+/* --- Mobile: comfortable tap targets -------------------------------------- */
+@media (max-width: 640px) {
+  .project-card__link {
+    min-height: 2.75rem;
+  }
+}
+
+/* Reduced motion gets the flat version: the lift stays (it is the existing
+   card behaviour) but the depth and any tilt are dropped entirely. */
+@media (prefers-reduced-motion: reduce) {
+  .project-card {
+    transform: translateY(0);
+  }
+
+  .project-card:hover {
+    transform: translateY(-3px);
+  }
+}
